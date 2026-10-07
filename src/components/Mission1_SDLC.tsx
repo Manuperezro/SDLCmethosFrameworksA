@@ -101,14 +101,14 @@ const STAGES: SDLCStage[] = [
 ];
 
 const INITIAL_EVIDENCE: EvidenceCard[] = [
-  { id: 'ev1', label: 'User requirements', icon: '📄', correctStageId: 'analysis', hint: 'Gained during stakeholder investigations.' },
-  { id: 'ev2', label: 'Wireframe design', icon: '🖼️', correctStageId: 'design', hint: 'Visual blueprint created before writing code.' },
-  { id: 'ev3', label: 'ERD (Database Diagram)', icon: '🗃️', correctStageId: 'design', hint: 'Defines database structure and entity relationships.' },
-  { id: 'ev4', label: 'Source code', icon: '💻', correctStageId: 'development', hint: 'Written by developers during implementation.' },
-  { id: 'ev5', label: 'Test table & results', icon: '🧪', correctStageId: 'testing', hint: 'Contains expected vs actual test outcomes.' },
-  { id: 'ev6', label: 'Bug report log', icon: '🐛', correctStageId: 'testing', hint: 'Records defects found during verification.' },
-  { id: 'ev7', label: 'User feedback', icon: '👤', correctStageId: 'maintenance', hint: 'Gathered from live users after deployment.' },
-  { id: 'ev8', label: 'Project Evaluation', icon: '📊', correctStageId: 'maintenance', hint: 'Assesses total project success against objectives.' },
+  { id: 'ev1', label: 'User requirements', icon: '📄', correctStageId: 'analysis', hint: 'User requirements are gathered during stakeholder investigations in Stage 3 (Analysis / Requirements), before design or coding.' },
+  { id: 'ev2', label: 'Wireframe design', icon: '🖼️', correctStageId: 'design', hint: 'Wireframes are visual design blueprints created in Stage 4 (Design) before any source code is written.' },
+  { id: 'ev3', label: 'ERD (Database Diagram)', icon: '🗃️', correctStageId: 'design', hint: 'An Entity Relationship Diagram (ERD) structures data and relationships during Stage 4 (Design).' },
+  { id: 'ev4', label: 'Source code', icon: '💻', correctStageId: 'development', hint: 'Source code is written by programmers during Stage 5 (Development).' },
+  { id: 'ev5', label: 'Test table & results', icon: '🧪', correctStageId: 'testing', hint: 'Test tables record expected vs actual results during Stage 6 (Testing).' },
+  { id: 'ev6', label: 'Bug report log', icon: '🐛', correctStageId: 'testing', hint: 'Bug reports log defects discovered during Stage 6 (Testing) verification.' },
+  { id: 'ev7', label: 'User feedback', icon: '👤', correctStageId: 'maintenance', hint: 'User feedback is gathered from live users after deployment in Stage 8 (Maintenance / Evaluation).' },
+  { id: 'ev8', label: 'Project Evaluation', icon: '📊', correctStageId: 'maintenance', hint: 'Evaluation reports review total project success against objectives in Stage 8 (Maintenance / Evaluation).' },
 ];
 
 export const Mission1_SDLC: React.FC<Mission1Props> = ({ onComplete, onOpenQuickNotes }) => {
@@ -155,7 +155,7 @@ export const Mission1_SDLC: React.FC<Mission1Props> = ({ onComplete, onOpenQuick
     } else {
       setFeedbackMsg({
         type: 'error',
-        text: `✕ Not quite! "${card.label}" doesn't belong in ${STAGES.find(s => s.id === stageId)?.name}. Hint: ${card.hint}`,
+        text: `✕ Developmental Feedback: "${card.label}" does not belong in ${STAGES.find(s => s.id === stageId)?.name}. ${card.hint}`,
       });
     }
   };
@@ -421,7 +421,7 @@ export const Mission1_SDLC: React.FC<Mission1Props> = ({ onComplete, onOpenQuick
       </div>
 
       {/* SECTION 3: VERY IMPORTANT TERMINOLOGY CLARIFICATION */}
-      <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <span className="px-3 py-1 rounded-full bg-amber-950 text-amber-300 border border-amber-800 text-xs font-bold uppercase tracking-wider">
             CRITICAL CONCEPT DISTINCTION

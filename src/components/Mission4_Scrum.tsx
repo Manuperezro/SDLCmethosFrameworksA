@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   CheckCircle2, 
-  AlertTriangle
+  AlertCircle
 } from 'lucide-react';
 
 interface Mission4Props {
@@ -29,6 +29,7 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
   // Step 1: Role Matching
   const [roleAssignments, setRoleAssignments] = useState<Record<string, 'po' | 'sm' | 'dev'>>({});
   const [rolesSubmitted, setRolesSubmitted] = useState<boolean>(false);
+  const [roleFeedback, setRoleFeedback] = useState<string | null>(null);
 
   // Step 2: Build a Sprint (Capacity = 10)
   const [selectedSprintItems, setSelectedSprintItems] = useState<string[]>([]);
@@ -42,6 +43,7 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
   // Step 4: Sprint Review & Retro
   const [reviewDone, setReviewDone] = useState<boolean>(false);
   const [retroSelections, setRetroSelections] = useState<string[]>([]);
+  const [retroFeedback, setRetroFeedback] = useState<string | null>(null);
 
   const totalSelectedPoints = selectedSprintItems.reduce((acc, id) => {
     const item = PRODUCT_BACKLOG_ITEMS.find(i => i.id === id);
@@ -59,6 +61,21 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
       if (totalSelectedPoints + item.points <= 10) {
         setSelectedSprintItems([...selectedSprintItems, id]);
       }
+    }
+  };
+
+  const handleVerifyRoles = () => {
+    const r1 = roleAssignments['r1'] === 'po';
+    const r2 = roleAssignments['r2'] === 'dev';
+    const r3 = roleAssignments['r3'] === 'sm';
+    const r4 = roleAssignments['r4'] === 'po';
+
+    if (r1 && r2 && r3 && r4) {
+      setRolesSubmitted(true);
+      setRoleFeedback(null);
+    } else {
+      setRoleFeedback('✕ Developmental Feedback: Accountabilities are incorrect! Product Owner manages backlog ordering & stakeholder needs; Scrum Master removes impediments/blockers; Developers build the usable product Increment.');
+      setRolesSubmitted(false);
     }
   };
 
@@ -112,6 +129,22 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
     setBlockerChoice(role);
     if (role === 'sm') {
       setBlockerResolved(true);
+    }
+  };
+
+  const toggleRetroSelection = (id: string) => {
+    let updated: string[];
+    if (retroSelections.includes(id)) {
+      updated = retroSelections.filter(i => i !== id);
+    } else {
+      updated = [...retroSelections, id];
+    }
+    setRetroSelections(updated);
+
+    if (updated.includes('ignore')) {
+      setRetroFeedback('✕ Developmental Feedback: Ignoring stakeholder feedback violates Scrum principles. The Retrospective focuses on process improvements and team collaboration, not avoiding feedback!');
+    } else {
+      setRetroFeedback(null);
     }
   };
 
@@ -212,19 +245,19 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
                   <div className="flex items-center space-x-1.5 shrink-0">
                     <button
                       onClick={() => setRoleAssignments({ ...roleAssignments, [item.id]: 'po' })}
-                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'po' ? 'bg-cyan-950 border-cyan-400 text-cyan-200' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
+                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'po' ? 'bg-cyan-950 border-cyan-400 text-cyan-200 font-bold ring-2 ring-cyan-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
                     >
                       👤 Product Owner
                     </button>
                     <button
                       onClick={() => setRoleAssignments({ ...roleAssignments, [item.id]: 'sm' })}
-                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'sm' ? 'bg-indigo-950 border-indigo-400 text-indigo-200' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
+                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'sm' ? 'bg-indigo-950 border-indigo-400 text-indigo-200 font-bold ring-2 ring-indigo-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
                     >
                       🧭 Scrum Master
                     </button>
                     <button
                       onClick={() => setRoleAssignments({ ...roleAssignments, [item.id]: 'dev' })}
-                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'dev' ? 'bg-emerald-950 border-emerald-400 text-emerald-200' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
+                      className={`px-2.5 py-1 rounded-lg border font-semibold ${assigned === 'dev' ? 'bg-emerald-950 border-emerald-400 text-emerald-200 font-bold ring-2 ring-emerald-500' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
                     >
                       💻 Developers
                     </button>
@@ -234,9 +267,19 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
             })}
           </div>
 
+          {roleFeedback && (
+            <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+              <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                <AlertCircle className="w-4 h-4 text-rose-400" />
+                <span>DEVELOPMENTAL FEEDBACK</span>
+              </div>
+              <p>{roleFeedback}</p>
+            </div>
+          )}
+
           {!rolesSubmitted ? (
             <button
-              onClick={() => setRolesSubmitted(true)}
+              onClick={handleVerifyRoles}
               disabled={Object.keys(roleAssignments).length < 4}
               className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-xl"
             >
@@ -331,7 +374,7 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
           {!blockerResolved && (
             <div className="p-4 bg-rose-950/90 border border-rose-500 rounded-2xl space-y-3 animate-bounce-subtle">
               <div className="flex items-center space-x-2 text-rose-200 text-xs font-extrabold uppercase tracking-wider">
-                <AlertTriangle className="w-5 h-5 text-rose-400" />
+                <AlertCircle className="w-5 h-5 text-rose-400" />
                 <span>🚨 MID-SPRINT IMPEDIMENT / BLOCKER DETECTED</span>
               </div>
               <p className="text-sm text-white font-semibold">
@@ -343,27 +386,34 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
               <div className="flex flex-wrap gap-2 text-xs">
                 <button
                   onClick={() => handleBlockerChoice('po')}
-                  className="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl"
+                  className={`px-3 py-2 rounded-xl border ${blockerChoice === 'po' ? 'bg-rose-950 border-rose-400 text-white font-bold' : 'bg-slate-900 border-slate-700 text-slate-200'}`}
                 >
                   👤 Product Owner
                 </button>
                 <button
                   onClick={() => handleBlockerChoice('sm')}
-                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold text-white rounded-xl shadow-md"
+                  className={`px-3 py-2 rounded-xl border font-bold ${blockerChoice === 'sm' ? 'bg-emerald-600 border-emerald-400 text-white' : 'bg-emerald-600/80 hover:bg-emerald-500 text-white'}`}
                 >
                   🧭 Scrum Master (Removes Blockers!)
                 </button>
                 <button
                   onClick={() => handleBlockerChoice('dev')}
-                  className="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl"
+                  className={`px-3 py-2 rounded-xl border ${blockerChoice === 'dev' ? 'bg-rose-950 border-rose-400 text-white font-bold' : 'bg-slate-900 border-slate-700 text-slate-200'}`}
                 >
                   💻 Developers alone
                 </button>
               </div>
+
               {blockerChoice && blockerChoice !== 'sm' && (
-                <p className="text-xs text-rose-300">
-                  ✕ The Product Owner manages business value and backlog order. The <strong>Scrum Master</strong> is responsible for removing team impediments!
-                </p>
+                <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                  <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                    <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                    <span>DEVELOPMENTAL FEEDBACK</span>
+                  </div>
+                  <p>
+                    ✕ The Product Owner manages business value and backlog order. Developers write code. The <strong>Scrum Master</strong>'s specific accountability is removing team impediments and blockers so developers can work smoothly!
+                  </p>
+                </div>
               )}
             </div>
           )}
@@ -448,20 +498,27 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        if (isSel) setRetroSelections(retroSelections.filter(i => i !== item.id));
-                        else setRetroSelections([...retroSelections, item.id]);
-                      }}
+                      onClick={() => toggleRetroSelection(item.id)}
                       className={`w-full p-3 rounded-xl border text-left flex items-center justify-between ${
-                        isSel ? (item.correct ? 'bg-emerald-950 border-emerald-400 text-white font-bold' : 'bg-rose-950 border-rose-400 text-white') : 'bg-slate-900 border-slate-800 text-slate-300'
+                        isSel ? (item.correct ? 'bg-emerald-950 border-emerald-400 text-white font-bold ring-2 ring-emerald-500' : 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500') : 'bg-slate-900 border-slate-800 text-slate-300'
                       }`}
                     >
                       <span>{item.label}</span>
-                      <span>{isSel ? '✓' : '○'}</span>
+                      <span>{isSel ? (item.correct ? '✓' : '✕') : '○'}</span>
                     </button>
                   );
                 })}
               </div>
+
+              {retroFeedback && (
+                <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                  <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                    <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                    <span>DEVELOPMENTAL FEEDBACK</span>
+                  </div>
+                  <p>{retroFeedback}</p>
+                </div>
+              )}
 
               <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-[11px] text-cyan-300 font-medium">
                 <strong>CRITICAL DISTINCTION:</strong> Sprint Review inspects the <em>PRODUCT / Increment</em>. Sprint Retrospective inspects <em>HOW THE TEAM WORKS</em>.

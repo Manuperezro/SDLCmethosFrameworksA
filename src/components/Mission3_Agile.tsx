@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   CheckCircle2, 
+  AlertCircle,
   ArrowUp, 
   ArrowDown, 
   MessageSquare
@@ -28,6 +29,7 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
   // Step 1: Change Scenario State
   const [selectedActions, setSelectedActions] = useState<string[]>([]);
   const [step1Submitted, setStep1Submitted] = useState<boolean>(false);
+  const [step1Feedback, setStep1Feedback] = useState<string | null>(null);
 
   // Step 2: Practical Agile Values Comparisons
   const [comparisonAnswers, setComparisonAnswers] = useState<Record<string, string>>({});
@@ -52,6 +54,24 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
       setSelectedActions(selectedActions.filter(a => a !== actionId));
     } else {
       setSelectedActions([...selectedActions, actionId]);
+    }
+    setStep1Submitted(false);
+    setStep1Feedback(null);
+  };
+
+  const handleVerifyStep1 = () => {
+    const hasIgnore = selectedActions.includes('ignore');
+    const hasDelete = selectedActions.includes('delete');
+
+    if (hasIgnore) {
+      setStep1Feedback('✕ Developmental Feedback: Ignoring client changes conflicts with Agile values. Agile teams welcome changing requirements even late in development to deliver maximum user value.');
+      setStep1Submitted(false);
+    } else if (hasDelete) {
+      setStep1Feedback('✕ Developmental Feedback: Deleting everything built so far wastes completed work and effort! Agile teams adapt by re-prioritising the Product Backlog rather than starting from scratch.');
+      setStep1Submitted(false);
+    } else {
+      setStep1Submitted(true);
+      setStep1Feedback(null);
     }
   };
 
@@ -82,6 +102,9 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
   const isAllStepsDone = 
     step1Submitted &&
     Object.keys(comparisonAnswers).length === 3 &&
+    comparisonAnswers.s1 === 'working' &&
+    comparisonAnswers.s2 === 'change' &&
+    comparisonAnswers.s3 === 'collab' &&
     hasReorderedSearch &&
     hasReorderedAccessibility &&
     builtStorySuccess &&
@@ -165,20 +188,32 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
                   onClick={() => toggleActionCard(card.id)}
                   className={`p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between text-xs ${
                     isSelected
-                      ? 'bg-amber-950 border-amber-400 text-white font-bold ring-2 ring-amber-500'
+                      ? card.correct
+                        ? 'bg-amber-950 border-amber-400 text-white font-bold ring-2 ring-amber-500'
+                        : 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500'
                       : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                   }`}
                 >
                   <span>{card.label}</span>
-                  <span>{isSelected ? '✓' : '○'}</span>
+                  <span>{isSelected ? (card.correct ? '✓' : '✕') : '○'}</span>
                 </button>
               );
             })}
           </div>
 
+          {step1Feedback && (
+            <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+              <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                <AlertCircle className="w-4 h-4 text-rose-400" />
+                <span>DEVELOPMENTAL FEEDBACK</span>
+              </div>
+              <p>{step1Feedback}</p>
+            </div>
+          )}
+
           {!step1Submitted ? (
             <button
-              onClick={() => setStep1Submitted(true)}
+              onClick={handleVerifyStep1}
               disabled={selectedActions.length === 0}
               className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-xl transition-all"
             >
@@ -218,17 +253,26 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s1: 'doc' })}
-                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s1 === 'doc' ? 'bg-rose-950 border-rose-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s1 === 'doc' ? 'bg-rose-950 border-rose-500 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Write 50 more pages of specifications first.
               </button>
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s1: 'working' })}
-                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s1 === 'working' ? 'bg-emerald-950 border-emerald-400 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s1 === 'working' ? 'bg-emerald-950 border-emerald-400 text-white ring-2 ring-emerald-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Focus on building a WORKING SOFTWARE prototype.
               </button>
             </div>
+            {comparisonAnswers.s1 === 'doc' && (
+              <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>✕ Writing endless documentation without working software delays user feedback and increases risk. Agile values <strong>Working software over comprehensive documentation</strong>.</p>
+              </div>
+            )}
             {comparisonAnswers.s1 === 'working' && (
               <p className="text-[11px] text-emerald-300 font-semibold bg-emerald-950/40 p-2 rounded-lg">
                 ✓ AGILE VALUE: Working software over comprehensive documentation.
@@ -244,17 +288,26 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s2: 'plan' })}
-                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s2 === 'plan' ? 'bg-rose-950 border-rose-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s2 === 'plan' ? 'bg-rose-950 border-rose-500 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Force users to accept the original plan.
               </button>
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s2: 'change' })}
-                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s2 === 'change' ? 'bg-emerald-950 border-emerald-400 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s2 === 'change' ? 'bg-emerald-950 border-emerald-400 text-white ring-2 ring-emerald-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Adapt the backlog by RESPONDING TO CHANGE.
               </button>
             </div>
+            {comparisonAnswers.s2 === 'plan' && (
+              <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>✕ Forcing users to accept an outdated plan results in unused software. Agile values <strong>Responding to change over following a plan</strong>.</p>
+              </div>
+            )}
             {comparisonAnswers.s2 === 'change' && (
               <p className="text-[11px] text-emerald-300 font-semibold bg-emerald-950/40 p-2 rounded-lg">
                 ✓ AGILE VALUE: Responding to change over following a plan.
@@ -270,17 +323,26 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s3: 'collab' })}
-                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s3 === 'collab' ? 'bg-emerald-950 border-emerald-400 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left font-bold ${comparisonAnswers.s3 === 'collab' ? 'bg-emerald-950 border-emerald-400 text-white ring-2 ring-emerald-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Increase CUSTOMER COLLABORATION through frequent demos.
               </button>
               <button
                 onClick={() => setComparisonAnswers({ ...comparisonAnswers, s3: 'contract' })}
-                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s3 === 'contract' ? 'bg-rose-950 border-rose-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left ${comparisonAnswers.s3 === 'contract' ? 'bg-rose-950 border-rose-500 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Wait until project sign-off before speaking.
               </button>
             </div>
+            {comparisonAnswers.s3 === 'contract' && (
+              <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>✕ Waiting until final sign-off risks discovering misunderstandings when it is too late to fix them. Agile values <strong>Customer collaboration over contract negotiation</strong>.</p>
+              </div>
+            )}
             {comparisonAnswers.s3 === 'collab' && (
               <p className="text-[11px] text-emerald-300 font-semibold bg-emerald-950/40 p-2 rounded-lg">
                 ✓ AGILE VALUE: Customer collaboration over contract negotiation.
@@ -467,6 +529,16 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
               )}
             </div>
 
+            {storyRole && storyAction && storyBenefit && !(storyRole === 'student' && storyAction.includes('search') && storyBenefit.includes('find somewhere')) && (
+              <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>✕ This combination is nonsensical or destructive (e.g., wanting the server to crash or deleting databases). Construct a story for a Student searching for study rooms!</p>
+              </div>
+            )}
+
             {storyRole === 'student' && storyAction.includes('search') && storyBenefit.includes('find somewhere') && (
               <div className="pt-2">
                 <button
@@ -497,7 +569,7 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
             <button
               onClick={() => setRequirementChoice('vague')}
               className={`p-4 rounded-2xl border text-left space-y-1 ${
-                requirementChoice === 'vague' ? 'bg-rose-950 border-rose-400 text-white' : 'bg-slate-950 border-slate-800 text-slate-300'
+                requirementChoice === 'vague' ? 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-950 border-slate-800 text-slate-300'
               }`}
             >
               <div className="font-bold text-rose-300">❌ "Make the website good"</div>
@@ -515,6 +587,18 @@ export const Mission3_Agile: React.FC<Mission3Props> = ({ onComplete, onOpenQuic
             </button>
 
           </div>
+
+          {requirementChoice === 'vague' && (
+            <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+              <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                <AlertCircle className="w-4 h-4 text-rose-400" />
+                <span>DEVELOPMENTAL FEEDBACK</span>
+              </div>
+              <p>
+                ✕ "Make the website good" is an unworkable requirement because every developer and user interprets "good" differently, and testers cannot write pass/fail criteria for it. Software requirements must be specific, understandable, and testable!
+              </p>
+            </div>
+          )}
         </div>
 
       </div>
