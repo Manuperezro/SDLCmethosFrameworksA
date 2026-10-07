@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
+import { AlertCircle } from 'lucide-react';
 import type { RiskItem } from '../types';
 
 interface Mission6Props {
@@ -49,6 +50,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
   // Step 1: Stakeholder Identification
   const [selectedStakeholders, setSelectedStakeholders] = useState<string[]>([]);
   const [step1Done, setStep1Done] = useState<boolean>(false);
+  const [step1Feedback, setStep1Feedback] = useState<string | null>(null);
 
   // Step 2: Triple Constraint Client Request
   const [scopeDecision, setScopeDecision] = useState<string | null>(null);
@@ -59,6 +61,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
   // Step 4: Building Blocks Strategy
   const [selectedBlocks, setSelectedBlocks] = useState<string[]>([]);
   const [strategyBuilt, setStrategyBuilt] = useState<boolean>(false);
+  const [strategyFeedback, setStrategyFeedback] = useState<string | null>(null);
 
   // Step 5: Test Case Execution
   const [testAction, setTestAction] = useState<string | null>(null);
@@ -69,19 +72,23 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
     } else {
       setSelectedStakeholders([...selectedStakeholders, id]);
     }
+    setStep1Feedback(null);
   };
 
   const handleVerifyStakeholders = () => {
-    if (
-      selectedStakeholders.includes('st_student') &&
-      selectedStakeholders.includes('st_admin') &&
-      selectedStakeholders.includes('st_mgmt') &&
-      selectedStakeholders.includes('st_dev') &&
-      !selectedStakeholders.includes('st_tourist')
-    ) {
+    const hasStudent = selectedStakeholders.includes('st_student');
+    const hasAdmin = selectedStakeholders.includes('st_admin');
+    const hasMgmt = selectedStakeholders.includes('st_mgmt');
+    const hasDev = selectedStakeholders.includes('st_dev');
+    const hasTourist = selectedStakeholders.includes('st_tourist');
+
+    if (hasStudent && hasAdmin && hasMgmt && hasDev && !hasTourist) {
       setStep1Done(true);
+      setStep1Feedback(null);
+    } else if (hasTourist) {
+      setStep1Feedback('✕ Developmental Feedback: Random Tourist is not a project stakeholder. Stakeholders must have a direct interest, operational role, or financial stake in the system (Students, Admin Staff, Management, Developers).');
     } else {
-      alert('Check your stakeholder selection! Random Tourist is not a relevant college stakeholder.');
+      setStep1Feedback('✕ Developmental Feedback: You are missing key internal stakeholders. Make sure to select Students, Admin Staff, College Management, and Developers!');
     }
   };
 
@@ -91,12 +98,48 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
     } else {
       setSelectedBlocks([...selectedBlocks, block]);
     }
+    setStrategyBuilt(false);
+    setStrategyFeedback(null);
+  };
+
+  const handleVerifyStrategy = () => {
+    const hasUpfrontLock = selectedBlocks.includes('Detailed Upfront Lock');
+    const hasSprints = selectedBlocks.includes('Short Iterations (Sprints)');
+
+    if (hasUpfrontLock && hasSprints) {
+      setStrategyFeedback('✕ Developmental Feedback: Selecting "Detailed Upfront Lock" alongside "Short Iterations (Sprints)" creates a methodology contradiction. Lock-in fits Waterfall, whereas Sprints require backlog flexibility. Select iterative building blocks for this project!');
+      setStrategyBuilt(false);
+    } else if (selectedBlocks.length < 3) {
+      setStrategyFeedback('✕ Developmental Feedback: Please select at least 3 building blocks to define a robust development strategy.');
+      setStrategyBuilt(false);
+    } else {
+      setStrategyBuilt(true);
+      setStrategyFeedback(null);
+    }
+  };
+
+  const getRiskFeedback = (riskId: string, selectedStrat: string) => {
+    if (riskId === 'r_sec') {
+      if (selectedStrat !== 'Avoid') {
+        return '✕ Developmental Feedback: GDPR data security vulnerabilities cannot be Accepted, Reduced, or Transferred because data breaches carry severe legal, financial, and reputational penalties. Security risks must be AVOIDED through encryption and mandatory security audits.';
+      }
+    } else if (riskId === 'r_dev') {
+      if (selectedStrat !== 'Reduce') {
+        return '✕ Developmental Feedback: You cannot Avoid or Transfer an internal team member illness. Accepting it without action leaves the team stranded. The correct strategy is REDUCE / MITIGATE through cross-training and documentation so others can step in.';
+      }
+    } else if (riskId === 'r_test') {
+      if (selectedStrat !== 'Reduce') {
+        return '✕ Developmental Feedback: You cannot Avoid testing delays once development is underway. REDUCING / MITIGATING the risk via continuous automated integration testing throughout the sprint prevents testing bottlenecks at the end.';
+      }
+    }
+    return null;
   };
 
   const isMissionFullyComplete = 
     step1Done &&
     scopeDecision === 'backlog' &&
     Object.keys(riskStrategies).length === RISKS.length &&
+    RISKS.every(r => riskStrategies[r.id] === r.correctStrategy) &&
     strategyBuilt &&
     testAction === 'fix';
 
@@ -177,6 +220,16 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
           })}
         </div>
 
+        {step1Feedback && (
+          <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+            <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+              <AlertCircle className="w-4 h-4 text-rose-400" />
+              <span>DEVELOPMENTAL FEEDBACK</span>
+            </div>
+            <p>{step1Feedback}</p>
+          </div>
+        )}
+
         {!step1Done ? (
           <button
             onClick={handleVerifyStakeholders}
@@ -216,7 +269,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <button
               onClick={() => setScopeDecision('add_now')}
-              className={`p-3.5 rounded-xl border text-left ${scopeDecision === 'add_now' ? 'bg-rose-950 border-rose-400 text-white' : 'bg-slate-950 border-slate-800 text-slate-300'}`}
+              className={`p-3.5 rounded-xl border text-left ${scopeDecision === 'add_now' ? 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-950 border-slate-800 text-slate-300'}`}
             >
               Add immediately now (Risk: Rush development, introduce critical bugs, miss deadline).
             </button>
@@ -227,6 +280,18 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
               Add to Product Backlog for future evaluation & prioritise with Product Owner.
             </button>
           </div>
+
+          {scopeDecision === 'add_now' && (
+            <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+              <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                <AlertCircle className="w-4 h-4 text-rose-400" />
+                <span>DEVELOPMENTAL FEEDBACK</span>
+              </div>
+              <p>
+                ✕ Adding major new features (video streaming & chat) immediately during an active sprint with a fixed 12-week deadline will overload the team, compromise software Quality, and lead to missed deadlines and budget overruns. In project management, scope additions must be submitted to the Product Backlog for estimation and prioritization with stakeholders!
+              </p>
+            </div>
+          )}
 
           {scopeDecision === 'backlog' && (
             <div className="p-3 bg-emerald-950/80 border border-emerald-600 rounded-xl text-xs text-emerald-200 font-semibold">
@@ -250,6 +315,9 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
           <div className="space-y-3 text-xs">
             {RISKS.map((risk) => {
               const selectedStrat = riskStrategies[risk.id];
+              const isCorrect = selectedStrat === risk.correctStrategy;
+              const feedbackMsg = selectedStrat ? getRiskFeedback(risk.id, selectedStrat) : null;
+
               return (
                 <div key={risk.id} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-2">
                   <div className="font-bold text-white flex justify-between">
@@ -265,9 +333,9 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
                         onClick={() => setRiskStrategies({ ...riskStrategies, [risk.id]: strat })}
                         className={`px-3 py-1.5 rounded-lg border font-semibold ${
                           selectedStrat === strat
-                            ? strat === risk.correctStrategy
-                              ? 'bg-emerald-950 border-emerald-400 text-emerald-200'
-                              : 'bg-rose-950 border-rose-400 text-rose-200'
+                            ? isCorrect
+                              ? 'bg-emerald-950 border-emerald-400 text-emerald-200 font-bold ring-2 ring-emerald-500'
+                              : 'bg-rose-950 border-rose-400 text-rose-200 font-bold ring-2 ring-rose-500'
                             : 'bg-slate-900 border-slate-800 text-slate-400'
                         }`}
                       >
@@ -276,9 +344,19 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
                     ))}
                   </div>
 
-                  {selectedStrat === risk.correctStrategy && (
+                  {isCorrect && (
                     <div className="text-[11px] text-emerald-300 font-semibold pt-1">
                       ✓ Correct strategy! {risk.explanation}
+                    </div>
+                  )}
+
+                  {feedbackMsg && (
+                    <div className="p-3 bg-rose-950/80 border border-rose-700 rounded-xl text-xs text-rose-200 font-medium space-y-1 mt-2">
+                      <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300 text-[11px]">
+                        <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
+                        <span>DEVELOPMENTAL FEEDBACK</span>
+                      </div>
+                      <p>{feedbackMsg}</p>
                     </div>
                   )}
                 </div>
@@ -289,7 +367,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
       )}
 
       {/* STEP 4 — CHOOSE A DEVELOPMENT STRATEGY */}
-      {Object.keys(riskStrategies).length === RISKS.length && (
+      {Object.keys(riskStrategies).length === RISKS.length && RISKS.every(r => riskStrategies[r.id] === r.correctStrategy) && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
             <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 4 OF 5</span>
@@ -323,11 +401,21 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
             })}
           </div>
 
+          {strategyFeedback && (
+            <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+              <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                <AlertCircle className="w-4 h-4 text-rose-400" />
+                <span>DEVELOPMENTAL FEEDBACK</span>
+              </div>
+              <p>{strategyFeedback}</p>
+            </div>
+          )}
+
           {!strategyBuilt ? (
             <button
-              onClick={() => setStrategyBuilt(true)}
-              disabled={selectedBlocks.length < 3}
-              className="px-5 py-2.5 bg-cyan-500 text-slate-950 font-bold text-xs rounded-xl"
+              onClick={handleVerifyStrategy}
+              disabled={selectedBlocks.length === 0}
+              className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-xl"
             >
               Analyze Custom Strategy
             </button>
@@ -373,7 +461,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 onClick={() => setTestAction('release')}
-                className={`p-3 rounded-xl border text-left ${testAction === 'release' ? 'bg-rose-950 border-rose-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left ${testAction === 'release' ? 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 Release anyway to meet deadline (✕ High Risk!)
               </button>
@@ -385,14 +473,38 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
               </button>
               <button
                 onClick={() => setTestAction('delete')}
-                className={`p-3 rounded-xl border text-left ${testAction === 'delete' ? 'bg-rose-950 border-rose-500 text-white' : 'bg-slate-950 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left ${testAction === 'delete' ? 'bg-rose-950 border-rose-400 text-white font-bold ring-2 ring-rose-500' : 'bg-slate-950 border-slate-800 text-slate-300'}`}
               >
                 Delete the capacity requirement (✕ Unacceptable!)
               </button>
             </div>
 
+            {testAction === 'release' && (
+              <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                  <AlertCircle className="w-4 h-4 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>
+                  ✕ Releasing software with known failing functional test cases (allowing overbooking) degrades user trust, causes administrative chaos, and breaches quality standards. Always FIX → RETEST → CONFIRM PASS before release!
+                </p>
+              </div>
+            )}
+
+            {testAction === 'delete' && (
+              <div className="p-4 bg-rose-950/80 border border-rose-700 rounded-2xl text-xs text-rose-200 font-medium space-y-1">
+                <div className="font-bold uppercase tracking-wider flex items-center gap-2 text-rose-300">
+                  <AlertCircle className="w-4 h-4 text-rose-400" />
+                  <span>DEVELOPMENTAL FEEDBACK</span>
+                </div>
+                <p>
+                  ✕ Deleting a core functional requirement to hide a software bug violates acceptance criteria and fails stakeholder objectives. The bug must be fixed and retested!
+                </p>
+              </div>
+            )}
+
             {testAction === 'fix' && (
-              <div className="p-3 bg-emerald-950/80 border border-emerald-600 rounded-xl text-emerald-200 font-semibold">
+              <div className="p-3 bg-emerald-950/80 border border-emerald-600 rounded-xl text-xs text-emerald-200 font-semibold">
                 ✓ CORRECT ACTION! Never release software with known failing functional test cases. Fix, retest, and verify before go-live!
               </div>
             )}
