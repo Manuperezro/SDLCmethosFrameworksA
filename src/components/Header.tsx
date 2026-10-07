@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Progress Pill */}
           <div className="hidden lg:flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60 text-xs text-slate-300">
-            <span className="text-cyan-400 font-bold">{completedCount}/6</span>
+            <span className="text-cyan-400 font-bold">{completedCount}/5</span>
             <span>Missions</span>
           </div>
 

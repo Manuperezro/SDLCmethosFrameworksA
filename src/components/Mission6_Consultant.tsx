@@ -60,7 +60,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
   const [selectedBlocks, setSelectedBlocks] = useState<string[]>([]);
   const [strategyBuilt, setStrategyBuilt] = useState<boolean>(false);
 
-  // Step 6: Test Case Execution
+  // Step 5: Test Case Execution
   const [testAction, setTestAction] = useState<string | null>(null);
 
   const toggleStakeholder = (id: string) => {
@@ -114,7 +114,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
           <div className="flex items-center space-x-3">
             <span className="text-3xl sm:text-4xl">👔</span>
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">MISSION 6 — CAPSTONE CONSULTANT (~25 MINS)</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">MISSION 5 — CAPSTONE CONSULTANT (~25 MINS)</span>
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white">COLLEGE EVENT BOOKING SYSTEM</h1>
             </div>
           </div>
@@ -144,7 +144,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
       {/* STEP 1 — IDENTIFY STAKEHOLDERS */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
         <div>
-          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 1 OF 6</span>
+          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 1 OF 5</span>
           <h2 className="text-xl font-extrabold text-white">IDENTIFY PROJECT STAKEHOLDERS</h2>
           <p className="text-xs text-slate-400 mt-1">
             Select the relevant project stakeholders for the College Event Booking System:
@@ -195,7 +195,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
       {step1Done && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 2 OF 6</span>
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 2 OF 5</span>
             <h2 className="text-xl font-extrabold text-white">PROJECT CONSTRAINTS (TRIPLE CONSTRAINT)</h2>
             <p className="text-xs text-slate-400 mt-1">
               Scope, Time, Cost, and Quality are tightly linked. If scope increases while time & cost are fixed, quality faces extreme pressure!
@@ -240,7 +240,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
       {scopeDecision === 'backlog' && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 3 OF 6</span>
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 3 OF 5</span>
             <h2 className="text-xl font-extrabold text-white">RISK ANALYSIS & MITIGATION</h2>
             <p className="text-xs text-slate-400 mt-1">
               Select the appropriate Risk Response Strategy (Avoid, Reduce/Mitigate, Accept, Transfer) for each technical risk:
@@ -292,14 +292,14 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
       {Object.keys(riskStrategies).length === RISKS.length && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 4 OF 6</span>
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 4 OF 5</span>
             <h2 className="text-xl font-extrabold text-white">BUILD A DEVELOPMENT STRATEGY</h2>
             <p className="text-xs text-slate-400 mt-1">
               Select the methodology building blocks that best fit the College Event Booking System:
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
             {[
               'Detailed Upfront Lock',
               'Short Iterations (Sprints)',
@@ -307,7 +307,6 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
               'Continuous Testing',
               'Incremental Releases',
               'Explicit Risk Reviews',
-              'Kanban Workflow Board',
             ].map((block) => {
               const isSel = selectedBlocks.includes(block);
               return (
@@ -339,18 +338,18 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
                 You selected: <strong>{selectedBlocks.join(', ')}</strong>.
               </p>
               <p className="text-emerald-300 font-semibold">
-                This approach resembles an Agile delivery model incorporating Scrum iterations and Kanban visual tracking. It provides high adaptability for user feedback while maintaining quality through continuous testing.
+                This approach resembles an Agile delivery model incorporating Scrum iterations. It provides high adaptability for user feedback while maintaining quality through continuous testing.
               </p>
             </div>
           )}
         </div>
       )}
 
-      {/* STEP 5 & 6 — TESTING BEFORE RELEASE */}
+      {/* STEP 5 — TESTING BEFORE RELEASE */}
       {strategyBuilt && (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
           <div>
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 5 & 6 OF 6</span>
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">STEP 5 OF 5</span>
             <h2 className="text-xl font-extrabold text-white">TEST BEFORE RELEASE</h2>
             <p className="text-xs text-slate-400 mt-1">
               Verify software behavior against non-negotiable functional requirements.
@@ -380,7 +379,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
               </button>
               <button
                 onClick={() => setTestAction('fix')}
-                className={`p-3 rounded-xl border text-left font-bold ${testAction === 'fix' ? 'bg-emerald-950 border-emerald-400 text-white ring-2 ring-emerald-500' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`p-3 rounded-xl border text-left font-bold ${testAction === 'fix' ? 'bg-emerald-950 border-emerald-400 text-white ring-2 ring-emerald-500' : 'bg-slate-950 border-slate-800 text-slate-300'}`}
               >
                 FIX BUG → RETEST → CONFIRM PASS ✓
               </button>
@@ -413,7 +412,7 @@ export const Mission6_Consultant: React.FC<Mission6Props> = ({ onComplete, onOpe
           </h2>
 
           <p className="text-sm text-slate-200 max-w-2xl mx-auto leading-relaxed">
-            Congratulations! You have successfully managed an end-to-end software development project lifecycle, balancing stakeholders, constraints, risks, Scrum/Kanban frameworks, and quality assurance!
+            Congratulations! You have successfully managed an end-to-end software development project lifecycle, balancing stakeholders, constraints, risks, Scrum framework, and quality assurance!
           </p>
 
           {/* Completed Journey Pipeline */}

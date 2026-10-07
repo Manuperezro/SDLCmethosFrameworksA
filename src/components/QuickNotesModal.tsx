@@ -316,35 +316,13 @@ export const QuickNotesModal: React.FC<QuickNotesModalProps> = ({ isOpen, onClos
                 )}
               </div>
 
-              {/* KANBAN */}
-              <div className="border border-slate-800 bg-slate-950/60 rounded-xl overflow-hidden">
-                <button
-                  onClick={() => toggleSection('kanban')}
-                  className="w-full px-4 py-3 bg-slate-800/80 hover:bg-slate-800 flex items-center justify-between text-left font-bold text-slate-100"
-                >
-                  <span className="flex items-center gap-2">📋 7. Kanban Framework</span>
-                  <span className="text-cyan-400 text-xs">{expandedSection === 'kanban' ? 'Collapse ▲' : 'Expand ▼'}</span>
-                </button>
-                {expandedSection === 'kanban' && (
-                  <div className="p-4 space-y-3 border-t border-slate-800 text-xs sm:text-sm">
-                    <p className="text-slate-300">
-                      <strong>Core Focus:</strong> Visualising workflow, managing flow, and enforcing Work In Progress (WIP) Limits to prevent multi-tasking bottlenecks.
-                    </p>
-                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs space-y-1">
-                      <p><strong className="text-cyan-300">WIP Limits:</strong> Restricts the number of active tasks in a column (e.g. In Progress Max: 2). Forces team members to finish tasks before pulling new ones.</p>
-                      <p><strong className="text-cyan-300">Key Motto:</strong> "Stop Starting, Start Finishing!"</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* PROJECT MANAGEMENT CONNECTIONS */}
               <div className="border border-slate-800 bg-slate-950/60 rounded-xl overflow-hidden">
                 <button
                   onClick={() => toggleSection('pm')}
                   className="w-full px-4 py-3 bg-slate-800/80 hover:bg-slate-800 flex items-center justify-between text-left font-bold text-slate-100"
                 >
-                  <span className="flex items-center gap-2">👔 8. Project Management Concepts (Unit 3)</span>
+                  <span className="flex items-center gap-2">👔 7. Project Management Concepts (Unit 3)</span>
                   <span className="text-cyan-400 text-xs">{expandedSection === 'pm' ? 'Collapse ▲' : 'Expand ▼'}</span>
                 </button>
                 {expandedSection === 'pm' && (
@@ -473,16 +451,6 @@ export const QuickNotesModal: React.FC<QuickNotesModalProps> = ({ isOpen, onClos
 
                 <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
                   <div className="flex items-center justify-between font-bold text-amber-300">
-                    <span>SCRUM ≠ KANBAN</span>
-                    <span className="text-rose-400 text-[10px] uppercase font-semibold">Time-boxed vs Flow</span>
-                  </div>
-                  <p className="text-slate-300">
-                    <strong>Scrum</strong> works in fixed time-boxed Sprints with assigned roles. <strong>Kanban</strong> focuses on continuous workflow visualization and WIP limits.
-                  </p>
-                </div>
-
-                <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
-                  <div className="flex items-center justify-between font-bold text-amber-300">
                     <span>PRODUCT BACKLOG ≠ SPRINT BACKLOG</span>
                     <span className="text-rose-400 text-[10px] uppercase font-semibold">Master List vs Sprint Plan</span>
                   </div>
@@ -553,8 +521,7 @@ export const QuickNotesModal: React.FC<QuickNotesModalProps> = ({ isOpen, onClos
 │
 └── FRAMEWORK / PRACTICES
     └── How does the team organise and manage day-to-day work?
-        ├── Scrum 🏃 (Sprints, Product Backlog, PO, SM, Devs)
-        └── Kanban 📋 (Workflow board, WIP Limits, Continuous Flow)`}
+        └── Scrum 🏃 (Sprints, Product Backlog, PO, SM, Devs)`}
                 </pre>
               </div>
             </div>

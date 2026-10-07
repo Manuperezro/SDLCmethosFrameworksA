@@ -5,7 +5,6 @@ import {
   Map, 
   Zap, 
   Play, 
-  Kanban as KanbanIcon, 
   Briefcase, 
   BookOpen, 
   CheckCircle, 
@@ -81,25 +80,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
     {
       id: 'mission5' as MissionId,
       number: 5,
-      title: 'KANBAN LAB',
-      subtitle: 'CONTROL THE FLOW OF WORK',
-      icon: '📋',
-      LucideIcon: KanbanIcon,
-      time: '~15 min',
-      description: 'Visualise workflow, set WIP limits to fix bottlenecks, manage continuous flow, and explore Scrumban hybrids.',
-      tags: ['WIP Limits', 'Bottlenecks', 'Continuous Flow', 'Scrumban'],
-      color: 'from-purple-600/20 to-pink-600/10 border-purple-500/30 hover:border-purple-400',
-      badgeColor: 'text-purple-400 bg-purple-950/80 border-purple-800',
-    },
-    {
-      id: 'mission6' as MissionId,
-      number: 6,
       title: 'PROJECT CONSULTANT',
       subtitle: 'COLLEGE EVENT BOOKING SYSTEM',
       icon: '👔',
       LucideIcon: Briefcase,
       time: '~25 min',
-      description: 'Integrate SDLC, methodologies, Scrum, Kanban, stakeholders, triple constraints, risks, and testing in a real scenario.',
+      description: 'Integrate SDLC, methodologies, Scrum, stakeholders, triple constraints, risks, and testing in a capstone scenario.',
       tags: ['Stakeholders', 'Triple Constraint', 'Risk Matrix', 'Test Cases'],
       color: 'from-cyan-600/20 to-sky-600/10 border-cyan-500/30 hover:border-cyan-400',
       badgeColor: 'text-cyan-400 bg-cyan-950/80 border-cyan-800',
@@ -164,7 +150,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             <div className="flex items-center space-x-2 text-xs text-slate-400 bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800">
               <Clock className="w-4 h-4 text-slate-400" />
-              <span>Total Lab Time: <strong>~90 mins</strong> (Do at your own pace)</span>
+              <span>Total Lab Time: <strong>~80 mins</strong> (Do at your own pace)</span>
             </div>
           </div>
         </div>
@@ -178,7 +164,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <div className="text-xs text-slate-400 uppercase font-bold tracking-wider">Overall Mission Completion</div>
               <div className="text-lg font-bold text-white">
-                {completedMissions} of 6 Missions Finished
+                {completedMissions} of 5 Missions Finished
               </div>
             </div>
           </div>
@@ -186,7 +172,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="w-full sm:w-64 bg-slate-900 rounded-full h-3 p-0.5 border border-slate-800 overflow-hidden">
             <div 
               className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full rounded-full transition-all duration-500"
-              style={{ width: `${(completedMissions / 6) * 100}%` }}
+              style={{ width: `${(completedMissions / 5) * 100}%` }}
             />
           </div>
         </div>

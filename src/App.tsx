@@ -7,7 +7,6 @@ import { Mission1_SDLC } from './components/Mission1_SDLC';
 import { Mission2_Models } from './components/Mission2_Models';
 import { Mission3_Agile } from './components/Mission3_Agile';
 import { Mission4_Scrum } from './components/Mission4_Scrum';
-import { Mission5_Kanban } from './components/Mission5_Kanban';
 import { Mission6_Consultant } from './components/Mission6_Consultant';
 
 const DEFAULT_PROGRESS: UserProgress = {
@@ -16,7 +15,6 @@ const DEFAULT_PROGRESS: UserProgress = {
   mission3: 'not-started',
   mission4: 'not-started',
   mission5: 'not-started',
-  mission6: 'not-started',
 };
 
 export const App: React.FC = () => {
@@ -24,7 +22,7 @@ export const App: React.FC = () => {
   const [isQuickNotesOpen, setIsQuickNotesOpen] = useState<boolean>(false);
   const [progress, setProgress] = useState<UserProgress>(() => {
     try {
-      const saved = localStorage.getItem('sdlc_lab_progress_v1');
+      const saved = localStorage.getItem('sdlc_lab_progress_v2');
       return saved ? JSON.parse(saved) : DEFAULT_PROGRESS;
     } catch {
       return DEFAULT_PROGRESS;
@@ -33,7 +31,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('sdlc_lab_progress_v1', JSON.stringify(progress));
+      localStorage.setItem('sdlc_lab_progress_v2', JSON.stringify(progress));
     } catch (e) {
       console.error('Failed to persist progress:', e);
     }
@@ -128,20 +126,9 @@ export const App: React.FC = () => {
         )}
 
         {currentView === 'mission5' && (
-          <Mission5_Kanban
-            onComplete={() => {
-              handleCompleteMission('mission5');
-              setCurrentView('mission6');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onOpenQuickNotes={() => setIsQuickNotesOpen(true)}
-          />
-        )}
-
-        {currentView === 'mission6' && (
           <Mission6_Consultant
             onComplete={() => {
-              handleCompleteMission('mission6');
+              handleCompleteMission('mission5');
               setCurrentView('dashboard');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}

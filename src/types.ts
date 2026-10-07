@@ -1,4 +1,4 @@
-export type MissionId = 'mission1' | 'mission2' | 'mission3' | 'mission4' | 'mission5' | 'mission6';
+export type MissionId = 'mission1' | 'mission2' | 'mission3' | 'mission4' | 'mission5';
 
 export type MissionStatus = 'not-started' | 'in-progress' | 'complete';
 
@@ -8,7 +8,6 @@ export interface UserProgress {
   mission3: MissionStatus;
   mission4: MissionStatus;
   mission5: MissionStatus;
-  mission6: MissionStatus;
 }
 
 export interface SDLCStage {
