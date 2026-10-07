@@ -460,12 +460,12 @@ export const Mission1_SDLC: React.FC<Mission1Props> = ({ onComplete, onOpenQuick
 
           <div className="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
             <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">3. FRAMEWORK & PRACTICES</div>
-            <h3 className="font-extrabold text-white text-base">Scrum & Kanban</h3>
+            <h3 className="font-extrabold text-white text-base">Scrum Framework</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Structured ways teams organise work. Scrum and Kanban are <strong>NOT</strong> SDLC stages!
+              Structured ways teams organise work. Frameworks like Scrum are <strong>NOT</strong> SDLC stages!
             </p>
             <div className="p-2.5 bg-slate-900 rounded-xl text-[11px] font-mono text-amber-300 border border-slate-800">
-              Product Backlog | Sprint | Daily Scrum | WIP Limits
+              Product Backlog | Sprint | Daily Scrum | Increment
             </div>
           </div>
 

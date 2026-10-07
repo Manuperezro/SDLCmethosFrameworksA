@@ -375,7 +375,7 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
             </div>
           )}
 
-          {/* Simple Kanban Board Columns */}
+          {/* Sprint Board Columns */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
             {['todo', 'doing', 'testing', 'done'].map((col) => (
               <div key={col} className="p-3 bg-slate-950 border border-slate-800 rounded-2xl space-y-2">
@@ -488,7 +488,7 @@ export const Mission4_Scrum: React.FC<Mission4Props> = ({ onComplete, onOpenQuic
               onClick={handleFinishMission}
               className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-lg transition-all"
             >
-              Continue to Mission 5: Kanban Lab →
+              Continue to Mission 5: Project Consultant →
             </button>
           </div>
         </div>
